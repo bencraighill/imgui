@@ -247,6 +247,9 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+    colors[ImGuiCol_ScrollbarDots]          = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
+    colors[ImGuiCol_ButtonToggled]          = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
+    colors[ImGuiCol_ButtonToggledHovered]   = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
 }
 
 void ImGui::StyleColorsClassic(ImGuiStyle* dst)
@@ -309,6 +312,9 @@ void ImGui::StyleColorsClassic(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+    colors[ImGuiCol_ScrollbarDots]          = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
+    colors[ImGuiCol_ButtonToggled]          = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
+    colors[ImGuiCol_ButtonToggledHovered]   = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
 }
 
 // Those light colors are better suited with a thicker font than the default one + FrameBorder
@@ -372,6 +378,9 @@ void ImGui::StyleColorsLight(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+    colors[ImGuiCol_ScrollbarDots]          = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
+    colors[ImGuiCol_ButtonToggled]          = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
+    colors[ImGuiCol_ButtonToggledHovered]   = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
 }
 
 //-----------------------------------------------------------------------------
@@ -3844,8 +3853,13 @@ void ImGui::RenderArrowPointingAt(ImDrawList* draw_list, ImVec2 pos, ImVec2 half
 // and because the saved space means that the left-most tab label can stay at exactly the same position as the label of a loose window.
 void ImGui::RenderArrowDockMenu(ImDrawList* draw_list, ImVec2 p_min, float sz, ImU32 col)
 {
-    draw_list->AddRectFilled(p_min + ImVec2(sz * 0.20f, sz * 0.15f), p_min + ImVec2(sz * 0.80f, sz * 0.30f), col);
-    RenderArrowPointingAt(draw_list, p_min + ImVec2(sz * 0.50f, sz * 0.85f), ImVec2(sz * 0.30f, sz * 0.40f), ImGuiDir_Down, col);
+    //Original
+    //draw_list->AddRectFilled(p_min + ImVec2(sz * 0.20f, sz * 0.15f), p_min + ImVec2(sz * 0.80f, sz * 0.30f), col);
+    //RenderArrowPointingAt(draw_list, p_min + ImVec2(sz * 0.50f, sz * 0.85f), ImVec2(sz * 0.30f, sz * 0.40f), ImGuiDir_Down, col);
+
+    draw_list->AddRectFilled(p_min + ImVec2(sz * 0.10f, sz * 0.20f), p_min + ImVec2(sz * 0.70f, sz * 0.30f), col);
+    draw_list->AddRectFilled(p_min + ImVec2(sz * 0.10f, sz * 0.425f), p_min + ImVec2(sz * 0.70f, sz * 0.525f), col);
+    draw_list->AddRectFilled(p_min + ImVec2(sz * 0.10f, sz * 0.65f), p_min + ImVec2(sz * 0.70f, sz * 0.75f), col);
 }
 
 static inline float ImAcos01(float x)
