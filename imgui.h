@@ -1,3 +1,5 @@
+// A modified version of ImGui for Dymatic Technologies
+
 // dear imgui, v1.87 WIP
 // (headers)
 
@@ -1557,6 +1559,7 @@ enum ImGuiCol_
     ImGuiCol_ChildBg,               // Background of child windows
     ImGuiCol_PopupBg,               // Background of popups, menus, tooltips windows
     ImGuiCol_Border,
+    ImGuiCol_MainWindowBorder,
     ImGuiCol_BorderShadow,
     ImGuiCol_FrameBg,               // Background of checkbox, radio button, plot, slider, text input
     ImGuiCol_FrameBgHovered,
@@ -1570,6 +1573,11 @@ enum ImGuiCol_
     ImGuiCol_ScrollbarGrabHovered,
     ImGuiCol_ScrollbarGrabActive,
     ImGuiCol_CheckMark,
+    ImGuiCol_Checkbox,
+    ImGuiCol_CheckboxHovered,
+    ImGuiCol_CheckboxActive,
+    ImGuiCol_CheckboxTicked,
+    ImGuiCol_CheckboxHoveredTicked,
     ImGuiCol_SliderGrab,
     ImGuiCol_SliderGrabActive,
     ImGuiCol_Button,

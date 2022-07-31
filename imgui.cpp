@@ -1,3 +1,5 @@
+// A modified version of dear imgui for Dymatic Technologies
+
 // dear imgui, v1.87 WIP
 // (main code and documentation)
 
@@ -2796,6 +2798,7 @@ const char* ImGui::GetStyleColorName(ImGuiCol idx)
     case ImGuiCol_ChildBg: return "ChildBg";
     case ImGuiCol_PopupBg: return "PopupBg";
     case ImGuiCol_Border: return "Border";
+    case ImGuiCol_MainWindowBorder: return "MainWindowBorder";
     case ImGuiCol_BorderShadow: return "BorderShadow";
     case ImGuiCol_FrameBg: return "FrameBg";
     case ImGuiCol_FrameBgHovered: return "FrameBgHovered";
