@@ -2798,7 +2798,9 @@ const char* ImGui::GetStyleColorName(ImGuiCol idx)
     case ImGuiCol_ChildBg: return "ChildBg";
     case ImGuiCol_PopupBg: return "PopupBg";
     case ImGuiCol_Border: return "Border";
-    case ImGuiCol_MainWindowBorder: return "MainWindowBorder";
+    case ImGuiCol_MainWindowBorderEdit: return "MainWindowBorderEdit";
+    case ImGuiCol_MainWindowBorderPlay: return "MainWindowBorderPlay";
+    case ImGuiCol_MainWindowBorderSimulate: return "MainWindowBorderSimulate";
     case ImGuiCol_BorderShadow: return "BorderShadow";
     case ImGuiCol_FrameBg: return "FrameBg";
     case ImGuiCol_FrameBgHovered: return "FrameBgHovered";
