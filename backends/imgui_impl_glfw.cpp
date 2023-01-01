@@ -48,6 +48,8 @@
 // ImGui Custom Addition (used to load Dymatic icon when creating windows)
 #include <stb_image.h>
 #include <windows.h>
+const char* g_ImGuiWindowIconPath;
+void SetImGuiWindowIconPath(const char* path) { g_ImGuiWindowIconPath = path; }
 
 // GLFW
 #include <GLFW/glfw3.h>
@@ -674,7 +676,7 @@ static void ImGui_ImplGlfw_ShowWindow(ImGuiViewport* viewport)
 
     // ImGui Custom Addition (requires Dymatic logo in directory)
     GLFWimage images[1];
-    images[0].pixels = stbi_load("assets/icons/DymaticLogo_Larger.png", &images[0].width, &images[0].height, 0, 4);
+    images[0].pixels = stbi_load(g_ImGuiWindowIconPath, &images[0].width, &images[0].height, 0, 4);
     ::glfwSetWindowIcon(data->Window, 1, images);
     ::stbi_image_free(images[0].pixels);
 }

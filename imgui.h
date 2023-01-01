@@ -1649,6 +1649,13 @@ enum ImGuiCol_
     ImGuiCol_TextEditorCurrentLineFillInactive,
     ImGuiCol_TextEditorCurrentLineEdge,
 
+    // Log
+    ImGuiCol_LogTrace,
+    ImGuiCol_LogInfo,
+    ImGuiCol_LogWarn,
+    ImGuiCol_LogError,
+    ImGuiCol_LogCritical,
+
     ImGuiCol_COUNT
 };
 
