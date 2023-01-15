@@ -297,6 +297,14 @@ void ImGui::TextColoredV(const ImVec4& col, const char* fmt, va_list args)
     PopStyleColor();
 }
 
+void ImGui::TextDisabledUnformatted(const char* text, const char* text_end)
+{
+    ImGuiContext& g = *GImGui;
+    PushStyleColor(ImGuiCol_Text, g.Style.Colors[ImGuiCol_TextDisabled]);
+    TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
+    PopStyleColor();
+}
+
 void ImGui::TextDisabled(const char* fmt, ...)
 {
     va_list args;
