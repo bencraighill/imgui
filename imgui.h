@@ -1799,6 +1799,7 @@ enum ImGuiMouseCursor_
     ImGuiMouseCursor_ResizeNWSE,        // When hovering over the bottom-right corner of a window
     ImGuiMouseCursor_Hand,              // (Unused by Dear ImGui functions. Use for e.g. hyperlinks)
     ImGuiMouseCursor_NotAllowed,        // When hovering something with disallowed interaction. Usually a crossed circle.
+    ImGuiMouseCursor_Crosshair,         // (Unused by Dear ImGui functions)
     ImGuiMouseCursor_COUNT
 };
 
@@ -3167,7 +3168,11 @@ struct ImGuiPlatformIO
     ImVec2  (*Platform_GetWindowSize)(ImGuiViewport* vp);                   // N . . . .  // Get platform window client area size
     void    (*Platform_SetWindowFocus)(ImGuiViewport* vp);                  // N . . . .  // Move window to front and set input focus
     bool    (*Platform_GetWindowFocus)(ImGuiViewport* vp);                  // . . U . .  //
+    bool    (*Platform_GetWindowMaximized)(ImGuiViewport* vp);              // . . . . .  // Get platform window maximized state.
+    void    (*Platform_SetWindowMaximized)(ImGuiViewport* vp);              // . . . . .  // Set platform window maximized state.
+    void    (*Platform_SetWindowRestored)(ImGuiViewport* vp);               // . . . . .  // Restores the platform window to its default state (not minimized or maximized)
     bool    (*Platform_GetWindowMinimized)(ImGuiViewport* vp);              // N . . . .  // Get platform window minimized state. When minimized, we generally won't attempt to get/set size and contents will be culled more easily
+    void    (*Platform_SetWindowMinimized)(ImGuiViewport* vp);              // . . . . .  // Set platform window minimized state.
     void    (*Platform_SetWindowTitle)(ImGuiViewport* vp, const char* str); // . . U . .  // Set platform window title (given an UTF-8 string)
     void    (*Platform_SetWindowAlpha)(ImGuiViewport* vp, float alpha);     // . . U . .  // (Optional) Setup global transparency (not per-pixel transparency)
     void    (*Platform_UpdateWindow)(ImGuiViewport* vp);                    // . . U . .  // (Optional) Called by UpdatePlatformWindows(). Optional hook to allow the platform backend from doing general book-keeping every frame.

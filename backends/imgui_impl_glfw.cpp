@@ -223,6 +223,7 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     g_MouseCursors[ImGuiMouseCursor_ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_Crosshair] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
 #if GLFW_HAS_NEW_CURSORS
     g_MouseCursors[ImGuiMouseCursor_ResizeAll] = glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
@@ -570,7 +571,8 @@ static void ImGui_ImplGlfw_CreateWindow(ImGuiViewport* viewport)
 #if GLFW_HAS_FOCUS_ON_SHOW
      glfwWindowHint(GLFW_FOCUS_ON_SHOW, false);
  #endif
-    glfwWindowHint(GLFW_DECORATED, (viewport->Flags & ImGuiViewportFlags_NoDecoration) ? false : true);
+     glfwWindowHint(GLFW_DECORATED, (viewport->Flags & ImGuiViewportFlags_NoDecoration) ? false : true);
+     glfwWindowHint(GLFW_DECORATION_VISIBLE, false);
 #if GLFW_HAS_WINDOW_TOPMOST
     glfwWindowHint(GLFW_FLOATING, (viewport->Flags & ImGuiViewportFlags_TopMost) ? true : false);
 #endif
@@ -581,6 +583,7 @@ static void ImGui_ImplGlfw_CreateWindow(ImGuiViewport* viewport)
 #ifdef _WIN32
     viewport->PlatformHandleRaw = glfwGetWin32Window(data->Window);
 #endif
+    
     glfwSetWindowPos(data->Window, (int)viewport->Pos.x, (int)viewport->Pos.y);
 
     // Install GLFW callbacks for secondary viewports
@@ -674,8 +677,9 @@ static void ImGui_ImplGlfw_ShowWindow(ImGuiViewport* viewport)
 
     glfwShowWindow(data->Window);
 
-    // ImGui Custom Addition (requires Dymatic logo in directory)
+    // ImGui Custom
     GLFWimage images[1];
+    stbi_set_flip_vertically_on_load(0);
     images[0].pixels = stbi_load(g_ImGuiWindowIconPath, &images[0].width, &images[0].height, 0, 4);
     ::glfwSetWindowIcon(data->Window, 1, images);
     ::stbi_image_free(images[0].pixels);
@@ -744,10 +748,34 @@ static bool ImGui_ImplGlfw_GetWindowFocus(ImGuiViewport* viewport)
     return glfwGetWindowAttrib(data->Window, GLFW_FOCUSED) != 0;
 }
 
+static bool ImGui_ImplGlfw_GetWindowMaximized(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataGlfw* data = (ImGuiViewportDataGlfw*)viewport->PlatformUserData;
+    return glfwGetWindowAttrib(data->Window, GLFW_MAXIMIZED) != 0;
+}
+
+static void ImGui_ImplGlfw_SetWindowMaximized(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataGlfw* data = (ImGuiViewportDataGlfw*)viewport->PlatformUserData;
+    glfwMaximizeWindow(data->Window);
+}
+
+static void ImGui_ImplGlfw_SetWindowRestored(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataGlfw* data = (ImGuiViewportDataGlfw*)viewport->PlatformUserData;
+    glfwRestoreWindow(data->Window);
+}
+
 static bool ImGui_ImplGlfw_GetWindowMinimized(ImGuiViewport* viewport)
 {
     ImGuiViewportDataGlfw* data = (ImGuiViewportDataGlfw*)viewport->PlatformUserData;
     return glfwGetWindowAttrib(data->Window, GLFW_ICONIFIED) != 0;
+}
+
+static void ImGui_ImplGlfw_SetWindowMinimized(ImGuiViewport* viewport)
+{
+    ImGuiViewportDataGlfw* data = (ImGuiViewportDataGlfw*)viewport->PlatformUserData;
+    glfwIconifyWindow(data->Window);
 }
 
 #if GLFW_HAS_WINDOW_ALPHA
@@ -841,7 +869,11 @@ static void ImGui_ImplGlfw_InitPlatformInterface()
     platform_io.Platform_GetWindowSize = ImGui_ImplGlfw_GetWindowSize;
     platform_io.Platform_SetWindowFocus = ImGui_ImplGlfw_SetWindowFocus;
     platform_io.Platform_GetWindowFocus = ImGui_ImplGlfw_GetWindowFocus;
+    platform_io.Platform_GetWindowMaximized = ImGui_ImplGlfw_GetWindowMaximized;
+    platform_io.Platform_SetWindowMaximized = ImGui_ImplGlfw_SetWindowMaximized;
+    platform_io.Platform_SetWindowRestored = ImGui_ImplGlfw_SetWindowRestored;
     platform_io.Platform_GetWindowMinimized = ImGui_ImplGlfw_GetWindowMinimized;
+    platform_io.Platform_SetWindowMinimized = ImGui_ImplGlfw_SetWindowMinimized;
     platform_io.Platform_SetWindowTitle = ImGui_ImplGlfw_SetWindowTitle;
     platform_io.Platform_RenderWindow = ImGui_ImplGlfw_RenderWindow;
     platform_io.Platform_SwapBuffers = ImGui_ImplGlfw_SwapBuffers;
