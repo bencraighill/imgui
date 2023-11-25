@@ -3632,6 +3632,142 @@ static void ShowDemoWindowLayout()
 
         ImGui::TreePop();
     }
+
+    IMGUI_DEMO_MARKER("Stack Layouts");
+    if (ImGui::TreeNode("Stack Layout"))
+    {
+        static bool widget_a = true, widget_b = true, widget_c = true;
+        static bool spring_a = true, spring_ab = true, spring_bc = true, spring_c = true;
+        static bool minimize_width = false, minimize_height = true;
+        static bool horizontal = true, draw_springs = true;
+        static ImVec2 item_spacing = ImGui::GetStyle().ItemSpacing;
+        static float a_c_spring_weight = 0.0f;
+        static float ab_spring_weight = 0.5f;
+        static float alignment = 0.5f;
+
+        struct funcs
+        {
+            static void VisibleSpring(float spring_weight)
+            {
+                ImVec2 start_cursor_pos = ImGui::GetCursorScreenPos();
+                ImGui::Spring(spring_weight);
+                ImVec2 end_cursor_pos = ImGui::GetCursorScreenPos();
+
+                if (!draw_springs)
+                    return;
+
+                if (spring_weight <= 0.0f)
+                    return;
+
+                if (fabsf(start_cursor_pos.x - end_cursor_pos.x) < 1.0f && fabsf(start_cursor_pos.y - end_cursor_pos.y) < 1.0f)
+                    return;
+
+                // Draw zig-zag
+                ImDrawList* draw_list = ImGui::GetWindowDrawList();
+                ImVec2 rect_min = ImGui::GetItemRectMin();
+                ImVec2 rect_max = ImGui::GetItemRectMax();
+
+                draw_list->PushClipRect(rect_min, rect_max, true);
+
+                float width = 0.0f;
+                ImVec2 direction, origin;
+
+                if (horizontal)
+                {
+                    width = rect_max.x - rect_min.x;
+                    origin = ImVec2(floorf(rect_min.x), floorf(rect_min.y + (rect_max.y - rect_min.y) / 2));
+                    direction = ImVec2(1.0f, 0.0f);
+                }
+                else
+                {
+                    width = rect_max.y - rect_min.y;
+                    origin = ImVec2(floorf(rect_min.x + (rect_max.x - rect_min.x) / 2), floorf(rect_min.y));
+                    direction = ImVec2(0.0f, 1.0f);
+                }
+
+                draw_list->AddRectFilled(rect_min, rect_max, ImColor(255, 128, 255, 40));
+
+                const float zig_zag_size = 3;
+                ImVec2 normal = ImVec2(-direction.y, direction.x);
+
+                draw_list->PathClear();
+                origin.x += 0.5f;
+                origin.y += 0.5f;
+                draw_list->PathLineTo(origin);
+                for (float x = zig_zag_size * 0.5f; x <= width; x += zig_zag_size)
+                {
+                    ImVec2 p;
+                    p.x = origin.x + direction.x * x + normal.x * zig_zag_size;
+                    p.y = origin.y + direction.y * x + normal.y * zig_zag_size;
+                    draw_list->PathLineTo(p);
+                    normal = ImVec2(-normal.x, -normal.y);
+                }
+                draw_list->PathStroke(ImColor(255, 255, 255, 190), false, 1.0f);
+
+                draw_list->PopClipRect();
+            }
+        };
+
+        ImGui::Checkbox("Widget A", &widget_a);  ImGui::SameLine();
+        ImGui::Checkbox("Widget B", &widget_b);  ImGui::SameLine();
+        ImGui::Checkbox("Widget C", &widget_c);
+        ImGui::Checkbox("Spring A", &spring_a);  ImGui::SameLine();
+        ImGui::Checkbox("Spring AB", &spring_ab); ImGui::SameLine();
+        ImGui::Checkbox("Spring BC", &spring_bc); ImGui::SameLine();
+        ImGui::Checkbox("Spring C", &spring_c);
+        ImGui::Checkbox("Horizontal", &horizontal);            ImGui::SameLine();
+        ImGui::Checkbox("Minimize Width", &minimize_width);     ImGui::SameLine();
+        ImGui::Checkbox("Minimize Height", &minimize_height);
+        ImGui::DragFloat("Item Spacing", horizontal ? &item_spacing.x : &item_spacing.y, 0.1f, 0.0f, 50.0f);
+        ImGui::DragFloat("A & C Spring Weight", &a_c_spring_weight, 0.002f, 0.0f, 1.0f);
+        ImGui::DragFloat("AB Spring Weight", &ab_spring_weight, 0.002f, 0.0f, 1.0f);
+        if (ImGui::IsItemHovered()) ImGui::SetTooltip("BC Spring Weight = 1 - AB Spring Weight");
+        ImGui::DragFloat("Minor Axis Alignment", &alignment, 0.002f, 0.0f, 1.0f);
+        if (ImGui::IsItemHovered()) ImGui::SetTooltip("This is vertical alignment for horizontal layouts and horizontal alignment for vertical layouts.");
+        ImGui::Text("Layout widgets:");
+        ImGui::Text("| Spring A | Widget A | Spring AB | Widget B | Spring BC | Widget C | Spring C |");
+
+        ImGui::Spacing();
+
+        ImVec2 widget_size;
+        widget_size.x = ImGui::GetContentRegionAvail().x / 4;
+        widget_size.y = horizontal ? floorf(widget_size.x / 3) : widget_size.x;
+
+        ImVec2 small_widget_size = widget_size;
+        if (horizontal)
+            small_widget_size.y = floorf(small_widget_size.y / 2);
+        else
+            small_widget_size.x = floorf(small_widget_size.x / 2);
+
+        ImVec2 layout_size = ImVec2(widget_size.x * 4, widget_size.y * 4);
+        if (minimize_width)  layout_size.x = 0.0f;
+        if (minimize_height) layout_size.y = 0.0f;
+
+        // Minor axis alignment can be set by style or directly in BeginHorizontal/BeginVertical
+        // Example:
+        //    ImGui::PushStyleVar(ImGuiStyleVar_LayoutAlign, alignment);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, item_spacing);
+
+        if (horizontal) { ImGui::BeginHorizontal("h1", layout_size, alignment); }
+        else { ImGui::BeginVertical("v1", layout_size, alignment); }
+        if (spring_a) { funcs::VisibleSpring(a_c_spring_weight); }
+        if (widget_a) { ImGui::Button("Widget A", widget_size); }
+        if (spring_ab) { funcs::VisibleSpring(ab_spring_weight); }
+        if (widget_b) { ImGui::Button("Widget B", small_widget_size); }
+        if (spring_bc) { funcs::VisibleSpring(1.0f - ab_spring_weight); }
+        if (widget_c) { ImGui::Button("Widget C", widget_size); }
+        if (spring_c) { funcs::VisibleSpring(a_c_spring_weight); }
+        if (horizontal) { ImGui::EndHorizontal(); }
+        else { ImGui::EndVertical(); }
+
+        ImGui::PopStyleVar();
+
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        draw_list->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImGui::GetColorU32(ImGuiCol_Border));
+
+        ImGui::TreePop();
+    }
 }
 
 static void ShowDemoWindowPopups()
@@ -6839,6 +6975,24 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             ImGui::EndTabItem();
         }
 
+        // ImGui Custom: Merged from features/shadows
+        if (ImGui::BeginTabItem("Shadows"))
+        {
+            ImGui::Text("Window shadows:");
+            ImGui::ColorEdit4("Color", (float*)&style.Colors[ImGuiCol_WindowShadow], ImGuiColorEditFlags_AlphaBar);
+            ImGui::SameLine();
+            HelpMarker("Same as 'WindowShadow' in Colors tab.");
+
+            ImGui::SliderFloat("Size", &style.WindowShadowSize, 0.0f, 128.0f, "%.1f");
+            ImGui::SameLine();
+            HelpMarker("Set shadow size to zero to disable shadows.");
+            ImGui::SliderFloat("Offset distance", &style.WindowShadowOffsetDist, 0.0f, 64.0f, "%.0f");
+            ImGui::SliderAngle("Offset angle", &style.WindowShadowOffsetAngle);
+
+            ImGui::EndTabItem();
+        }
+        // --------------------------------------- //
+
         ImGui::EndTabBar();
     }
 
@@ -8209,6 +8363,167 @@ static void ShowExampleAppCustomRendering(bool* p_open)
 
             ImGui::EndTabItem();
         }
+
+        // ImGui Custom: Merged from shadows/features
+        if (ImGui::BeginTabItem("Shadows"))
+        {
+            static float shadow_thickness = 40.0f;
+            static ImVec4 shadow_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+            static bool shadow_filled = false;
+            static ImVec4 shape_color = ImVec4(0.9f, 0.6f, 0.3f, 1.0f);
+            static float shape_rounding = 0.0f;
+            static ImVec2 shadow_offset(0.0f, 0.0f);
+            static ImVec4 background_color = ImVec4(0.5f, 0.5f, 0.7f, 1.0f);
+            static bool wireframe = false;
+            static bool aa = true;
+            static int poly_shape_index = 0;
+            ImGui::Checkbox("Shadow filled", &shadow_filled);
+            ImGui::SameLine();
+            HelpMarker("This will fill the section behind the shape to shadow. It's often unnecessary and wasteful but provided for consistency.");
+            ImGui::Checkbox("Wireframe shapes", &wireframe);
+            ImGui::SameLine();
+            HelpMarker("This draws the shapes in wireframe so you can see the shadow underneath.");
+            ImGui::Checkbox("Anti-aliasing", &aa);
+
+            ImGui::DragFloat("Shadow Thickness", &shadow_thickness, 1.0f, 0.0f, 100.0f, "%.02f");
+            ImGui::SliderFloat2("Offset", (float*)&shadow_offset, -32.0f, 32.0f);
+            ImGui::SameLine();
+            HelpMarker("Note that currently circles/convex shapes do not support non-zero offsets for unfilled shadows.");
+            ImGui::ColorEdit4("Background Color", &background_color.x);
+            ImGui::ColorEdit4("Shadow Color", &shadow_color.x);
+            ImGui::ColorEdit4("Shape Color", &shape_color.x);
+            ImGui::DragFloat("Shape Rounding", &shape_rounding, 1.0f, 0.0f, 20.0f, "%.02f");
+            ImGui::Combo("Convex shape", &poly_shape_index, "Shape 1\0Shape 2\0Shape 3\0Shape 4\0Shape 4 (winding reversed)");
+
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            ImDrawListFlags old_flags = draw_list->Flags;
+
+            if (aa)
+                draw_list->Flags |= ~ImDrawListFlags_AntiAliasedFill;
+            else
+                draw_list->Flags &= ~ImDrawListFlags_AntiAliasedFill;
+
+            // Fill a strip of background
+            draw_list->AddRectFilled(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y), ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowContentRegionMax().x, ImGui::GetCursorScreenPos().y + 200.0f), ImGui::GetColorU32(background_color));
+
+            // Rectangle
+            {
+                ImVec2 p = ImGui::GetCursorScreenPos();
+                ImGui::Dummy(ImVec2(200.0f, 200.0f));
+
+                ImVec2 r1(p.x + 50.0f, p.y + 50.0f);
+                ImVec2 r2(p.x + 150.0f, p.y + 150.0f);
+                ImDrawFlags draw_flags = shadow_filled ? ImDrawFlags_None : ImDrawFlags_ShadowCutOutShapeBackground;
+                draw_list->AddShadowRect(r1, r2, ImGui::GetColorU32(shadow_color), shadow_thickness, shadow_offset, draw_flags, shape_rounding);
+
+                if (wireframe)
+                    draw_list->AddRect(r1, r2, ImGui::GetColorU32(shape_color), shape_rounding);
+                else
+                    draw_list->AddRectFilled(r1, r2, ImGui::GetColorU32(shape_color), shape_rounding);
+            }
+
+            ImGui::SameLine();
+
+            // Circle
+            {
+                ImVec2 p = ImGui::GetCursorScreenPos();
+                ImGui::Dummy(ImVec2(200.0f, 200.0f));
+
+                // FIXME-SHADOWS: Offset forced to zero when shadow is not filled because it isn't supported
+                float off = 10.0f;
+                ImVec2 r1(p.x + 50.0f + off, p.y + 50.0f + off);
+                ImVec2 r2(p.x + 150.0f - off, p.y + 150.0f - off);
+                ImVec2 center(p.x + 100.0f, p.y + 100.0f);
+                ImDrawFlags draw_flags = shadow_filled ? ImDrawFlags_None : ImDrawFlags_ShadowCutOutShapeBackground;
+                draw_list->AddShadowCircle(center, 50.0f, ImGui::GetColorU32(shadow_color), shadow_thickness, shadow_filled ? shadow_offset : ImVec2(0.0f, 0.0f), draw_flags, 0);
+
+                if (wireframe)
+                    draw_list->AddCircle(center, 50.0f, ImGui::GetColorU32(shape_color), 0);
+                else
+                    draw_list->AddCircleFilled(center, 50.0f, ImGui::GetColorU32(shape_color), 0);
+            }
+
+            ImGui::SameLine();
+
+            // Convex shape
+            {
+                ImVec2 pos = ImGui::GetCursorScreenPos();
+                ImGui::Dummy(ImVec2(200.0f, 200.0f));
+
+                const ImVec2 poly_centre(pos.x + 50.0f, pos.y + 100.0f);
+                ImVec2 poly_points[8];
+                int poly_points_count = 0;
+
+                switch (poly_shape_index)
+                {
+                default:
+                case 0:
+                {
+                    poly_points[0] = ImVec2(poly_centre.x - 32.0f, poly_centre.y);
+                    poly_points[1] = ImVec2(poly_centre.x - 24.0f, poly_centre.y + 24.0f);
+                    poly_points[2] = ImVec2(poly_centre.x, poly_centre.y + 32.0f);
+                    poly_points[3] = ImVec2(poly_centre.x + 24.0f, poly_centre.y + 24.0f);
+                    poly_points[4] = ImVec2(poly_centre.x + 32.0f, poly_centre.y);
+                    poly_points[5] = ImVec2(poly_centre.x + 24.0f, poly_centre.y - 24.0f);
+                    poly_points[6] = ImVec2(poly_centre.x, poly_centre.y - 32.0f);
+                    poly_points[7] = ImVec2(poly_centre.x - 32.0f, poly_centre.y - 32.0f);
+                    poly_points_count = 8;
+                    break;
+                }
+                case 1:
+                {
+                    poly_points[0] = ImVec2(poly_centre.x + 40.0f, poly_centre.y - 20.0f);
+                    poly_points[1] = ImVec2(poly_centre.x, poly_centre.y + 32.0f);
+                    poly_points[2] = ImVec2(poly_centre.x - 24.0f, poly_centre.y - 32.0f);
+                    poly_points_count = 3;
+                    break;
+                }
+                case 2:
+                {
+                    poly_points[0] = ImVec2(poly_centre.x - 32.0f, poly_centre.y);
+                    poly_points[1] = ImVec2(poly_centre.x, poly_centre.y + 32.0f);
+                    poly_points[2] = ImVec2(poly_centre.x + 32.0f, poly_centre.y);
+                    poly_points[3] = ImVec2(poly_centre.x, poly_centre.y - 32.0f);
+                    poly_points_count = 4;
+                    break;
+                }
+                case 3:
+                {
+                    poly_points[0] = ImVec2(poly_centre.x - 4.0f, poly_centre.y - 20.0f);
+                    poly_points[1] = ImVec2(poly_centre.x + 12.0f, poly_centre.y + 2.0f);
+                    poly_points[2] = ImVec2(poly_centre.x + 8.0f, poly_centre.y + 16.0f);
+                    poly_points[3] = ImVec2(poly_centre.x, poly_centre.y + 32.0f);
+                    poly_points[4] = ImVec2(poly_centre.x - 16.0f, poly_centre.y - 32.0f);
+                    poly_points_count = 5;
+                    break;
+                }
+                case 4: // Same as test case 3 but with reversed winding
+                {
+                    poly_points[0] = ImVec2(poly_centre.x - 16.0f, poly_centre.y - 32.0f);
+                    poly_points[1] = ImVec2(poly_centre.x, poly_centre.y + 32.0f);
+                    poly_points[2] = ImVec2(poly_centre.x + 8.0f, poly_centre.y + 16.0f);
+                    poly_points[3] = ImVec2(poly_centre.x + 12.0f, poly_centre.y + 2.0f);
+                    poly_points[4] = ImVec2(poly_centre.x - 4.0f, poly_centre.y - 20.0f);
+                    poly_points_count = 5;
+                    break;
+                }
+                }
+
+                // FIXME-SHADOWS: Offset forced to zero when shadow is not filled because it isn't supported
+                ImDrawFlags draw_flags = shadow_filled ? ImDrawFlags_None : ImDrawFlags_ShadowCutOutShapeBackground;
+                draw_list->AddShadowConvexPoly(poly_points, poly_points_count, ImGui::GetColorU32(shadow_color), shadow_thickness, shadow_filled ? shadow_offset : ImVec2(0.0f, 0.0f), draw_flags);
+
+                if (wireframe)
+                    draw_list->AddPolyline(poly_points, poly_points_count, ImGui::GetColorU32(shape_color), true, 1.0f);
+                else
+                    draw_list->AddConvexPolyFilled(poly_points, poly_points_count, ImGui::GetColorU32(shape_color));
+            }
+
+            draw_list->Flags = old_flags;
+
+            ImGui::EndTabItem();
+        }
+        // --------------------------------------- //
 
         if (ImGui::BeginTabItem("BG/FG draw lists"))
         {

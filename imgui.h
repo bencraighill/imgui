@@ -1,3 +1,5 @@
+// A modified version of ImGui for Dymatic Technologies
+
 // dear imgui, v1.90.0
 // (headers)
 
@@ -28,6 +30,7 @@
 #define IMGUI_HAS_TABLE
 #define IMGUI_HAS_VIEWPORT          // Viewport WIP branch
 #define IMGUI_HAS_DOCK              // Docking WIP branch
+#define IMGUI_HAS_STACK_LAYOUT 1    // Stack-Layout PR #846
 
 /*
 
@@ -341,6 +344,8 @@ namespace ImGui
     IMGUI_API bool          Begin(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0);
     IMGUI_API void          End();
 
+    IMGUI_API bool          BeginDockable(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0, ImGuiWindowFlags dockspace_flags = 0);
+
     // Child Windows
     // - Use child windows to begin into a self-contained independent scrolling/clipping regions within a host window. Child windows can embed their own child.
     // - Before 1.90 (November 2023), the "ImGuiChildFlags child_flags = 0" parameter was "bool border = false".
@@ -472,6 +477,7 @@ namespace ImGui
 
     // Other layout functions
     IMGUI_API void          Separator();                                                    // separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator.
+    IMGUI_API bool          Splitter(const char* label, bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
     IMGUI_API void          SameLine(float offset_from_start_x=0.0f, float spacing=-1.0f);  // call between widgets or groups to layout them horizontally. X position given in window coordinates.
     IMGUI_API void          NewLine();                                                      // undo a SameLine() or force a new line when in a horizontal-layout context.
     IMGUI_API void          Spacing();                                                      // add vertical spacing.
@@ -485,6 +491,18 @@ namespace ImGui
     IMGUI_API float         GetTextLineHeightWithSpacing();                                 // ~ FontSize + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of text)
     IMGUI_API float         GetFrameHeight();                                               // ~ FontSize + style.FramePadding.y * 2
     IMGUI_API float         GetFrameHeightWithSpacing();                                    // ~ FontSize + style.FramePadding.y * 2 + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of framed widgets)
+
+    IMGUI_API void          BeginHorizontal(const char* str_id, const ImVec2& size = ImVec2(0, 0), float align = -1.0f);
+    IMGUI_API void          BeginHorizontal(const void* ptr_id, const ImVec2& size = ImVec2(0, 0), float align = -1.0f);
+    IMGUI_API void          BeginHorizontal(int id, const ImVec2& size = ImVec2(0, 0), float align = -1);
+    IMGUI_API void          EndHorizontal();
+    IMGUI_API void          BeginVertical(const char* str_id, const ImVec2& size = ImVec2(0, 0), float align = -1.0f);
+    IMGUI_API void          BeginVertical(const void* ptr_id, const ImVec2& size = ImVec2(0, 0), float align = -1.0f);
+    IMGUI_API void          BeginVertical(int id, const ImVec2& size = ImVec2(0, 0), float align = -1);
+    IMGUI_API void          EndVertical();
+    IMGUI_API void          Spring(float weight = 1.0f, float spacing = -1.0f);
+    IMGUI_API void          SuspendLayout();
+    IMGUI_API void          ResumeLayout();
 
     // ID stack/scopes
     // Read the FAQ (docs/FAQ.md or http://dearimgui.com/faq) for more details about how ID are handled in dear imgui.
@@ -512,6 +530,7 @@ namespace ImGui
     IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
     IMGUI_API void          TextColored(const ImVec4& col, const char* fmt, ...)            IM_FMTARGS(2); // shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();
     IMGUI_API void          TextColoredV(const ImVec4& col, const char* fmt, va_list args)  IM_FMTLIST(2);
+    IMGUI_API void          TextDisabledUnformatted(const char* text, const char* text_end = NULL);
     IMGUI_API void          TextDisabled(const char* fmt, ...)                              IM_FMTARGS(1); // shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();
     IMGUI_API void          TextDisabledV(const char* fmt, va_list args)                    IM_FMTLIST(1);
     IMGUI_API void          TextWrapped(const char* fmt, ...)                               IM_FMTARGS(1); // shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize().
@@ -526,6 +545,7 @@ namespace ImGui
     // - Most widgets return true when the value has been changed or when pressed/selected
     // - You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.) to query widget state.
     IMGUI_API bool          Button(const char* label, const ImVec2& size = ImVec2(0, 0));   // button
+    IMGUI_API bool          ToggleButton(const char* label, bool* v, const ImVec2& size = ImVec2(0, 0));   // toggle button
     IMGUI_API bool          SmallButton(const char* label);                                 // button with (FramePadding.y == 0) to easily embed within text
     IMGUI_API bool          InvisibleButton(const char* str_id, const ImVec2& size, ImGuiButtonFlags flags = 0); // flexible button behavior without the visuals, frequently useful to build custom behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)
     IMGUI_API bool          ArrowButton(const char* str_id, ImGuiDir dir);                  // square button with an arrow shape
@@ -651,6 +671,7 @@ namespace ImGui
     // - Neighbors selectable extend their highlight bounds in order to leave no gap between them. This is so a series of selected Selectable appear contiguous.
     IMGUI_API bool          Selectable(const char* label, bool selected = false, ImGuiSelectableFlags flags = 0, const ImVec2& size = ImVec2(0, 0)); // "bool selected" carry the selection state (read-only). Selectable() is clicked is returns true so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height
     IMGUI_API bool          Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags = 0, const ImVec2& size = ImVec2(0, 0));      // "bool* p_selected" point to the selection state (read-write), as a convenient helper.
+    IMGUI_API bool          SelectableInput(const char* str_id, float width, bool selected, ImGuiSelectableFlags flags, char* buf, size_t buf_size, bool& input, ImGuiInputTextFlags input_flags = 0);
 
     // Widgets: List Boxes
     // - This is essentially a thin wrapper to using BeginChild/EndChild with the ImGuiChildFlags_FrameStyle flag for stylistic changes + displaying a label.
@@ -897,6 +918,7 @@ namespace ImGui
     // - See Demo Window under "Widgets->Querying Status" for an interactive visualization of most of those functions.
     IMGUI_API bool          IsItemHovered(ImGuiHoveredFlags flags = 0);                         // is the last item hovered? (and usable, aka not blocked by a popup, etc.). See ImGuiHoveredFlags for more options.
     IMGUI_API bool          IsItemActive();                                                     // is the last item active? (e.g. button being held, text field being edited. This will continuously return true while holding mouse button on an item. Items that don't interact will always return false)
+    IMGUI_API bool          IsItemActivePreviousFrame();
     IMGUI_API bool          IsItemFocused();                                                    // is the last item focused for keyboard/gamepad navigation?
     IMGUI_API bool          IsItemClicked(ImGuiMouseButton mouse_button = 0);                   // is the last item hovered and mouse clicked on? (**)  == IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this is NOT equivalent to the behavior of e.g. Button(). Read comments in function definition.
     IMGUI_API bool          IsItemVisible();                                                    // is the last item visible? (items may be out of sight because of clipping/scrolling)
@@ -1694,6 +1716,9 @@ enum ImGuiCol_
     ImGuiCol_ChildBg,               // Background of child windows
     ImGuiCol_PopupBg,               // Background of popups, menus, tooltips windows
     ImGuiCol_Border,
+    ImGuiCol_MainWindowBorderEdit,
+    ImGuiCol_MainWindowBorderPlay,
+    ImGuiCol_MainWindowBorderSimulate,
     ImGuiCol_BorderShadow,
     ImGuiCol_FrameBg,               // Background of checkbox, radio button, plot, slider, text input
     ImGuiCol_FrameBgHovered,
@@ -1707,6 +1732,11 @@ enum ImGuiCol_
     ImGuiCol_ScrollbarGrabHovered,
     ImGuiCol_ScrollbarGrabActive,
     ImGuiCol_CheckMark,
+    ImGuiCol_Checkbox,
+    ImGuiCol_CheckboxHovered,
+    ImGuiCol_CheckboxActive,
+    ImGuiCol_CheckboxTicked,
+    ImGuiCol_CheckboxHoveredTicked,
     ImGuiCol_SliderGrab,
     ImGuiCol_SliderGrabActive,
     ImGuiCol_Button,
@@ -1743,6 +1773,42 @@ enum ImGuiCol_
     ImGuiCol_NavWindowingHighlight, // Highlight window when using CTRL+TAB
     ImGuiCol_NavWindowingDimBg,     // Darken/colorize entire screen behind the CTRL+TAB window list, when active
     ImGuiCol_ModalWindowDimBg,      // Darken/colorize entire screen behind a modal window, when one is active
+
+    // ImGui Custom: Merged from features/shadows
+    ImGuiCol_WindowShadow,          // Window shadows
+    // --------------------------------------- //
+
+    ImGuiCol_ScrollbarDots,
+    ImGuiCol_ButtonToggled,
+    ImGuiCol_ButtonToggledHovered,
+    ImGuiCol_ProgressBarBg,
+    ImGuiCol_ProgressBarBorder,
+    ImGuiCol_ProgressBarFill,
+    ImGuiCol_MenuBarGrip,
+    ImGuiCol_MenuBarGripBorder,
+
+    ImGuiCol_TextEditorDefault,
+    ImGuiCol_TextEditorKeyword,
+    ImGuiCol_TextEditorSpecialKeyword,
+    ImGuiCol_TextEditorNumber,
+    ImGuiCol_TextEditorString,
+    ImGuiCol_TextEditorCharLiteral,
+    ImGuiCol_TextEditorPunctuation,
+    ImGuiCol_TextEditorPreprocessor,
+    ImGuiCol_TextEditorIdentifier,
+    ImGuiCol_TextEditorComment,
+    ImGuiCol_TextEditorMultiLineComment,
+    ImGuiCol_TextEditorLineNumber,
+    ImGuiCol_TextEditorCurrentLineFill,
+    ImGuiCol_TextEditorCurrentLineFillInactive,
+    ImGuiCol_TextEditorCurrentLineEdge,
+
+    ImGuiCol_LogTrace,
+    ImGuiCol_LogInfo,
+    ImGuiCol_LogWarn,
+    ImGuiCol_LogError,
+    ImGuiCol_LogCritical,
+
     ImGuiCol_COUNT
 };
 
@@ -1782,6 +1848,7 @@ enum ImGuiStyleVar_
     ImGuiStyleVar_TabBarBorderSize,    // float     TabBarBorderSize
     ImGuiStyleVar_ButtonTextAlign,     // ImVec2    ButtonTextAlign
     ImGuiStyleVar_SelectableTextAlign, // ImVec2    SelectableTextAlign
+    ImGuiStyleVar_LayoutAlign,         // float     LayoutAlign
     ImGuiStyleVar_SeparatorTextBorderSize,// float  SeparatorTextBorderSize
     ImGuiStyleVar_SeparatorTextAlign,  // ImVec2    SeparatorTextAlign
     ImGuiStyleVar_SeparatorTextPadding,// ImVec2    SeparatorTextPadding
@@ -1886,6 +1953,7 @@ enum ImGuiMouseCursor_
     ImGuiMouseCursor_ResizeNWSE,        // When hovering over the bottom-right corner of a window
     ImGuiMouseCursor_Hand,              // (Unused by Dear ImGui functions. Use for e.g. hyperlinks)
     ImGuiMouseCursor_NotAllowed,        // When hovering something with disallowed interaction. Usually a crossed circle.
+    ImGuiMouseCursor_Crosshair,         // (Unused by Dear ImGui functions)
     ImGuiMouseCursor_COUNT
 };
 
@@ -2044,6 +2112,7 @@ struct ImGuiStyle
     float       ScrollbarRounding;          // Radius of grab corners for scrollbar.
     float       GrabMinSize;                // Minimum width/height of a grab box for slider/scrollbar.
     float       GrabRounding;               // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
+    float       LayoutAlign;                // Element alignment inside horizontal and vertical layouts (0.0f - left/top, 1.0f - right/bottom, 0.5f - center).
     float       LogSliderDeadzone;          // The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.
     float       TabRounding;                // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
     float       TabBorderSize;              // Thickness of border around tabs.
@@ -2065,6 +2134,11 @@ struct ImGuiStyle
     bool        AntiAliasedFill;            // Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
     float       CurveTessellationTol;       // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
     float       CircleTessellationMaxError; // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
+    // ImGui Custom: Merged from features/shadows
+    float       WindowShadowSize;           // Size (in pixels) of window shadows. Set this to zero to disable shadows.
+    float       WindowShadowOffsetDist;     // Offset distance (in pixels) of window shadows from casting window.
+    float       WindowShadowOffsetAngle;    // Offset angle of window shadows from casting window (0.0f = left, 0.5f*PI = bottom, 1.0f*PI = right, 1.5f*PI = top).
+    // --------------------------------------- //
     ImVec4      Colors[ImGuiCol_COUNT];
 
     // Behaviors
@@ -2773,6 +2847,9 @@ enum ImDrawFlags_
     ImDrawFlags_RoundCornersAll             = ImDrawFlags_RoundCornersTopLeft | ImDrawFlags_RoundCornersTopRight | ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersBottomRight,
     ImDrawFlags_RoundCornersDefault_        = ImDrawFlags_RoundCornersAll, // Default to ALL corners if none of the _RoundCornersXX flags are specified.
     ImDrawFlags_RoundCornersMask_           = ImDrawFlags_RoundCornersAll | ImDrawFlags_RoundCornersNone,
+    // ImGui Custom: Merged from features/shadows
+    ImDrawFlags_ShadowCutOutShapeBackground = 1 << 9  // Do not render the shadow shape under the objects to be shadowed to save on fill-rate or facilitate blending. Slower on CPU.
+    // --------------------------------------- //
 };
 
 // Flags for ImDrawList instance. Those are set automatically by ImGui:: functions from ImGuiIO settings, and generally not manipulated directly.
@@ -2864,6 +2941,25 @@ struct ImDrawList
     IMGUI_API void  AddImageQuad(ImTextureID user_texture_id, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, const ImVec2& uv1 = ImVec2(0, 0), const ImVec2& uv2 = ImVec2(1, 0), const ImVec2& uv3 = ImVec2(1, 1), const ImVec2& uv4 = ImVec2(0, 1), ImU32 col = IM_COL32_WHITE);
     IMGUI_API void  AddImageRounded(ImTextureID user_texture_id, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min, const ImVec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags = 0);
 
+    // ImGui Custom: Merged from features/shadows
+    // Shadows primitives
+    // [BETA] API
+    // - Add shadow for a object, with min/max or center/radius describing the object extents, and offset shifting the shadow.
+    // - Rounding parameters refer to the object itself, not the shadow!
+    // - By default, the area under the object is filled, because this is simpler to process.
+    //   Using the ImDrawFlags_ShadowCutOutShapeBackground flag makes the function not render this area and leave a hole under the object.
+    //    - Shadows w/ fill under the object: a bit faster for CPU, more pixels rendered, visible/darkening if used behind a transparent shape.
+    //      Typically used by: small, frequent objects, opaque objects, transparent objects if shadow darkening isn't an issue.
+    //    - Shadows w/ hole under the object: a bit slower for CPU, less pixels rendered, no difference if used behind a transparent shape.
+    //      Typically used by: large, infrequent objects, transparent objects if exact blending/color matter.
+    // - FIXME-SHADOWS: 'offset' + ImDrawFlags_ShadowCutOutShapeBackground are not currently supported together with AddShadowCircle(), AddShadowConvexPoly(), AddShadowNGon().
+    #define IMGUI_HAS_SHADOWS 1
+    IMGUI_API void  AddShadowRect(const ImVec2& obj_min, const ImVec2& obj_max, ImU32 shadow_col, float shadow_thickness, const ImVec2& shadow_offset, ImDrawFlags flags = 0, float obj_rounding = 0.0f);
+    IMGUI_API void  AddShadowCircle(const ImVec2& obj_center, float obj_radius, ImU32 shadow_col, float shadow_thickness, const ImVec2& shadow_offset, ImDrawFlags flags = 0, int obj_num_segments = 12);
+    IMGUI_API void  AddShadowConvexPoly(const ImVec2* points, int points_count, ImU32 shadow_col, float shadow_thickness, const ImVec2& shadow_offset, ImDrawFlags flags = 0);
+    IMGUI_API void  AddShadowNGon(const ImVec2& obj_center, float obj_radius, ImU32 shadow_col, float shadow_thickness, const ImVec2& shadow_offset, ImDrawFlags flags, int obj_num_segments);
+    // --------------------------------------- //
+
     // Stateful path API, add points then finish with PathFillConvex() or PathStroke()
     // - Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
     inline    void  PathClear()                                                 { _Path.Size = 0; }
@@ -2948,6 +3044,26 @@ struct ImDrawData
 //-----------------------------------------------------------------------------
 // [SECTION] Font API (ImFontConfig, ImFontGlyph, ImFontAtlasFlags, ImFontAtlas, ImFontGlyphRangesBuilder, ImFont)
 //-----------------------------------------------------------------------------
+
+// ImGui Custom: Merged from features/shadows
+// [Internal] Shadow texture baking config
+struct ImFontAtlasShadowTexConfig
+{
+    int     TexCornerSize;          // Size of the corner areas.
+    int     TexEdgeSize;            // Size of the edge areas (and by extension the center). Changing this is normally unnecessary.
+    float   TexFalloffPower;        // The power factor for the shadow falloff curve.
+    float   TexDistanceFieldOffset; // How much to offset the distance field by (allows over/under-shadowing, potentially useful for accommodating rounded corners on the "casting" shape).
+    bool    TexBlur;                // Do we want to Gaussian blur the shadow texture?
+
+    inline ImFontAtlasShadowTexConfig() { memset(this, 0, sizeof(*this)); }
+    IMGUI_API void SetupDefaults();
+    int     GetRectTexPadding() const { return 2; }                                                   // Number of pixels of padding to add to the rectangular texture to avoid sampling artifacts at the edges.
+    int     CalcRectTexSize() const { return TexCornerSize + TexEdgeSize + GetRectTexPadding(); }   // The size of the texture area required for the actual 2x2 rectangle shadow texture (after the redundant corners have been removed). Padding is required here to avoid sampling artifacts at the edge adjoining the removed corners.    int     CalcConvexTexWidth() const;                                                                // The width of the texture area required for the convex shape shadow texture.
+    int     GetConvexTexPadding() const { return 8; }                                                   // Number of pixels of padding to add to the convex shape texture to avoid sampling artifacts at the edges. This also acts as padding for the expanded corner triangles.
+    int     CalcConvexTexWidth() const;                                                                 // The width of the texture area required for the convex shape shadow texture.
+    int     CalcConvexTexHeight() const;                                                                // The height of the texture area required for the convex shape shadow texture.
+};
+// --------------------------------------- //
 
 struct ImFontConfig
 {
@@ -3140,6 +3256,13 @@ struct ImFontAtlas
     // [Internal] Packing data
     int                         PackIdMouseCursors; // Custom texture rectangle ID for white pixel and mouse cursors
     int                         PackIdLines;        // Custom texture rectangle ID for baked anti-aliased lines
+
+    // IMGUI CUSTOM: Merged from features/shadows
+    // [Internal] Shadow data
+    int                         ShadowRectIds[2];   // IDs of rect for shadow textures
+    ImVec4                      ShadowRectUvs[10];  // UV coordinates for shadow textures, 9 for the rectangle shadows and the final entry for the convex shape shadows
+    ImFontAtlasShadowTexConfig  ShadowTexConfig;    // Shadow texture baking config
+    // --------------------------------------- //
 
     // [Obsolete]
     //typedef ImFontAtlasCustomRect    CustomRect;         // OBSOLETED in 1.72+
@@ -3347,7 +3470,11 @@ struct ImGuiPlatformIO
     ImVec2  (*Platform_GetWindowSize)(ImGuiViewport* vp);                   // N . . . .  // Get platform window client area size
     void    (*Platform_SetWindowFocus)(ImGuiViewport* vp);                  // N . . . .  // Move window to front and set input focus
     bool    (*Platform_GetWindowFocus)(ImGuiViewport* vp);                  // . . U . .  //
+    bool    (*Platform_GetWindowMaximized)(ImGuiViewport* vp);              // . . . . .  // Get platform window maximized state.
+    void    (*Platform_SetWindowMaximized)(ImGuiViewport* vp);              // . . . . .  // Set platform window maximized state.
+    void    (*Platform_SetWindowRestored)(ImGuiViewport* vp);               // . . . . .  // Restores the platform window to its default state (not minimized or maximized)
     bool    (*Platform_GetWindowMinimized)(ImGuiViewport* vp);              // N . . . .  // Get platform window minimized state. When minimized, we generally won't attempt to get/set size and contents will be culled more easily
+    void    (*Platform_SetWindowMinimized)(ImGuiViewport* vp);              // . . . . .  // Set platform window minimized state.
     void    (*Platform_SetWindowTitle)(ImGuiViewport* vp, const char* str); // . . U . .  // Set platform window title (given an UTF-8 string)
     void    (*Platform_SetWindowAlpha)(ImGuiViewport* vp, float alpha);     // . . U . .  // (Optional) Setup global transparency (not per-pixel transparency)
     void    (*Platform_UpdateWindow)(ImGuiViewport* vp);                    // . . U . .  // (Optional) Called by UpdatePlatformWindows(). Optional hook to allow the platform backend from doing general book-keeping every frame.
