@@ -2421,15 +2421,33 @@ const ImGuiDataTypeInfo* ImGui::DataTypeGetInfo(ImGuiDataType data_type)
 
 int ImGui::DataTypeFormatString(char* buf, int buf_size, ImGuiDataType data_type, const void* p_data, const char* format)
 {
+    ImGuiContext& g = *GImGui;
+    
     // Signedness doesn't matter when pushing integer arguments
     if (data_type == ImGuiDataType_S32 || data_type == ImGuiDataType_U32)
         return ImFormatString(buf, buf_size, format, *(const ImU32*)p_data);
     if (data_type == ImGuiDataType_S64 || data_type == ImGuiDataType_U64)
         return ImFormatString(buf, buf_size, format, *(const ImU64*)p_data);
     if (data_type == ImGuiDataType_Float)
-        return ImFormatString(buf, buf_size, format, *(const float*)p_data);
+    {
+        float value = *(const float*)p_data;
+        if (value == INFINITY)
+            return ImFormatString(buf, buf_size, g.IO.InfinityString);
+        else if (value == -INFINITY)
+            return ImFormatString(buf, buf_size, g.IO.NegativeInfinityString);
+        else
+            return ImFormatString(buf, buf_size, format, value);
+    }
     if (data_type == ImGuiDataType_Double)
-        return ImFormatString(buf, buf_size, format, *(const double*)p_data);
+    {
+        double value = *(const double*)p_data;
+        if (value == INFINITY)
+            return ImFormatString(buf, buf_size, g.IO.InfinityString);
+        else if (value == -INFINITY)
+            return ImFormatString(buf, buf_size, g.IO.NegativeInfinityString);
+        else
+            return ImFormatString(buf, buf_size, format, value);
+    }
     if (data_type == ImGuiDataType_S8)
         return ImFormatString(buf, buf_size, format, *(const ImS8*)p_data);
     if (data_type == ImGuiDataType_U8)

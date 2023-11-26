@@ -2191,6 +2191,9 @@ struct ImGuiIO
     ImFont*     FontDefault;                    // = NULL           // Font to use on NewFrame(). Use NULL to uses Fonts->Fonts[0].
     ImVec2      DisplayFramebufferScale;        // = (1, 1)         // For retina display or other situations where window coordinates are different from framebuffer coordinates. This generally ends up in ImDrawData::FramebufferScale.
 
+    const char* InfinityString;                 // = "inf"          // The string used to represent infinity for floating point values.
+    const char* NegativeInfinityString;         // = "-inf"         // The string used to represent negative infinity for floating point values.
+
     // Docking options (when ImGuiConfigFlags_DockingEnable is set)
     bool        ConfigDockingNoSplit;           // = false          // Simplified docking mode: disable window splitting, so docking is limited to merging multiple windows together into tab-bars.
     bool        ConfigDockingWithShift;         // = false          // Enable docking with holding Shift key (reduce visual noise, allows dropping in wider space)

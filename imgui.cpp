@@ -1311,6 +1311,9 @@ ImGuiIO::ImGuiIO()
 #endif
     UserData = NULL;
 
+    InfinityString = "inf";
+    NegativeInfinityString = "-inf";
+
     Fonts = NULL;
     FontGlobalScale = 1.0f;
     FontDefault = NULL;
