@@ -3603,6 +3603,37 @@ static void ShowDemoWindowLayout()
         ImGui::TreePop();
     }
 
+    IMGUI_DEMO_MARKER("Layout/Overlap Mode");
+    if (ImGui::TreeNode("Overlap Mode"))
+    {
+        static bool enable_allow_overlap = true;
+
+        HelpMarker(
+            "Hit-testing is by default performed in item submission order, which generally is perceived as 'back-to-front'.\n\n"
+            "By using SetNextItemAllowOverlap() you can notify that an item may be overlapped by another. Doing so alters the hovering logic: items using AllowOverlap mode requires an extra frame to accept hovered state.");
+        ImGui::Checkbox("Enable AllowOverlap", &enable_allow_overlap);
+
+        ImVec2 button1_pos = ImGui::GetCursorScreenPos();
+        ImVec2 button2_pos = ImVec2(button1_pos.x + 50.0f, button1_pos.y + 50.0f);
+        if (enable_allow_overlap)
+            ImGui::SetNextItemAllowOverlap();
+        ImGui::Button("Button 1", ImVec2(80, 80));
+        ImGui::SetCursorScreenPos(button2_pos);
+        ImGui::Button("Button 2", ImVec2(80, 80));
+
+        // This is typically used with width-spanning items.
+        // (note that Selectable() has a dedicated flag ImGuiSelectableFlags_AllowOverlap, which is a shortcut
+        // for using SetNextItemAllowOverlap(). For demo purpose we use SetNextItemAllowOverlap() here.)
+        if (enable_allow_overlap)
+            ImGui::SetNextItemAllowOverlap();
+        ImGui::Selectable("Some Selectable", false);
+        ImGui::SameLine();
+        ImGui::SmallButton("++");
+
+        ImGui::TreePop();
+    }
+
+    IMGUI_DEMO_MARKER("Layout/Stack Layout");
     if (ImGui::TreeNode("Stack Layout"))
     {
         static bool widget_a = true, widget_b = true, widget_c = true;
@@ -3618,43 +3649,50 @@ static void ShowDemoWindowLayout()
         {
             static void VisibleSpring(float spring_weight)
             {
-                ImVec2 start_cursor_pos = ImGui::GetCursorScreenPos();
                 ImGui::Spring(spring_weight);
-                ImVec2 end_cursor_pos = ImGui::GetCursorScreenPos();
-
                 if (!draw_springs)
                     return;
 
-                if (spring_weight <= 0.0f)
-                    return;
-
-                if (fabsf(start_cursor_pos.x - end_cursor_pos.x) < 1.0f && fabsf(start_cursor_pos.y - end_cursor_pos.y) < 1.0f)
-                    return;
-
-                // Draw zig-zag
-                ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 ImVec2 rect_min = ImGui::GetItemRectMin();
                 ImVec2 rect_max = ImGui::GetItemRectMax();
 
-                draw_list->PushClipRect(rect_min, rect_max, true);
+                ImVec2 rect_size = ImGui::GetItemRectSize();
+                if (rect_size.x <= 0.0f && rect_size.y <= 0.0f)
+                    return;
 
-                float width = 0.0f;
+                // Draw zig-zag
+                float width = 0.0f, spacing = 0.0f;
                 ImVec2 direction, origin;
+                ImVec2 spacing_min, spring_max;
 
                 if (horizontal)
                 {
-                    width = rect_max.x - rect_min.x;
+                    spacing = floorf(item_spacing.x);
+                    width = rect_size.x - spacing;
                     origin = ImVec2(floorf(rect_min.x), floorf(rect_min.y + (rect_max.y - rect_min.y) / 2));
                     direction = ImVec2(1.0f, 0.0f);
+                    spring_max = ImVec2(rect_min.x + width, rect_max.y);
+                    spacing_min = ImVec2(rect_min.x + width, rect_min.y);
                 }
                 else
                 {
-                    width = rect_max.y - rect_min.y;
+                    spacing = floorf(item_spacing.y);
+                    width = rect_size.y - spacing;
                     origin = ImVec2(floorf(rect_min.x + (rect_max.x - rect_min.x) / 2), floorf(rect_min.y));
                     direction = ImVec2(0.0f, 1.0f);
+                    spring_max = ImVec2(rect_max.x, rect_min.y + width);
+                    spacing_min = ImVec2(rect_min.x, rect_min.y + width);
                 }
 
-                draw_list->AddRectFilled(rect_min, rect_max, ImColor(255, 128, 255, 40));
+                if (spring_weight <= 0.0f && spacing <= 0.0f)
+                    return;
+
+                ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+                draw_list->PushClipRect(rect_min, rect_max, true);
+
+                draw_list->AddRectFilled(rect_min, spring_max, ImColor(80, 20, 80));
+                draw_list->AddRectFilled(spacing_min, rect_max, ImColor(80, 20, 20));
 
                 const float zig_zag_size = 3;
                 ImVec2 normal = ImVec2(-direction.y, direction.x);
@@ -3687,6 +3725,13 @@ static void ShowDemoWindowLayout()
         ImGui::Checkbox("Horizontal", &horizontal);            ImGui::SameLine();
         ImGui::Checkbox("Minimize Width", &minimize_width);     ImGui::SameLine();
         ImGui::Checkbox("Minimize Height", &minimize_height);
+        ImGui::Checkbox("Draw Springs", &draw_springs); ImGui::SameLine();
+        ImGui::TextUnformatted(" "); ImGui::SameLine();
+        ImGui::ColorButton("- Spring", ImColor(80, 20, 80), ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoPicker); ImGui::SameLine();
+        ImGui::TextUnformatted("Spring"); ImGui::SameLine();
+        ImGui::TextUnformatted(" "); ImGui::SameLine();
+        ImGui::ColorButton("- Spacing", ImColor(80, 20, 20), ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoPicker); ImGui::SameLine();
+        ImGui::TextUnformatted("Item Spacing");
         ImGui::DragFloat("Item Spacing", horizontal ? &item_spacing.x : &item_spacing.y, 0.1f, 0.0f, 50.0f);
         ImGui::DragFloat("A & C Spring Weight", &a_c_spring_weight, 0.002f, 0.0f, 1.0f);
         ImGui::DragFloat("AB Spring Weight", &ab_spring_weight, 0.002f, 0.0f, 1.0f);
@@ -3699,7 +3744,7 @@ static void ShowDemoWindowLayout()
         ImGui::Spacing();
 
         ImVec2 widget_size;
-        widget_size.x = ImGui::GetContentRegionAvail().x / 4;
+        widget_size.x = floorf(ImGui::GetContentRegionAvail().x / 4);
         widget_size.y = horizontal ? floorf(widget_size.x / 3) : widget_size.x;
 
         ImVec2 small_widget_size = widget_size;
@@ -3716,7 +3761,7 @@ static void ShowDemoWindowLayout()
         // Example:
         //    ImGui::PushStyleVar(ImGuiStyleVar_LayoutAlign, alignment);
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, item_spacing);
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(floorf(item_spacing.x), floorf(item_spacing.y)));
 
         if (horizontal) { ImGui::BeginHorizontal("h1", layout_size, alignment); }
         else { ImGui::BeginVertical("v1", layout_size, alignment); }
@@ -6944,7 +6989,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             ImGui::EndTabItem();
         }
 
-        // IMGUI CUSTOM: Merged from features/shadows
+        // ImGui Custom: Merged from features/shadows
         if (ImGui::BeginTabItem("Shadows"))
         {
             ImGui::Text("Window shadows:");
@@ -8333,7 +8378,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             ImGui::EndTabItem();
         }
 
-        // IMGUI CUSTOM: Merged from shadows/features
+        // ImGui Custom: Merged from shadows/features
         if (ImGui::BeginTabItem("Shadows"))
         {
             static float shadow_thickness = 40.0f;

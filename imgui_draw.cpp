@@ -8,13 +8,13 @@ Index of this file:
 // [SECTION] STB libraries implementation
 // [SECTION] Style functions
 // [SECTION] ImDrawList
-// IMGUI CUSTOM: Merged from features/shadows
+// ImGui Custom: Merged from features/shadows
 // [SECTION] ImDrawList Shadow Primitives
 // --------------------------------------- //
 // [SECTION] ImDrawListSplitter
 // [SECTION] ImDrawData
 // [SECTION] Helpers ShadeVertsXXX functions
-// IMGUI CUSTOM: Merged from features/shadows
+// ImGui Custom: Merged from features/shadows
 // [SECTION] ImFontAtlasShadowTexConfig
 // --------------------------------------- //
 // [SECTION] ImFontConfig
@@ -240,37 +240,12 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-    // IMGUI CUSTOM: Merged from features/shadows
+    // ImGui Custom: Merged from features/shadows
     colors[ImGuiCol_WindowShadow]           = ImVec4(0.0f,  0.0f,  0.0f,  1.0f);
     // --------------------------------------- //
     colors[ImGuiCol_ScrollbarDots]          = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
     colors[ImGuiCol_ButtonToggled]          = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
     colors[ImGuiCol_ButtonToggledHovered]   = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
-    colors[ImGuiCol_ProgressBarBg]          = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-    colors[ImGuiCol_ProgressBarBorder]      = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
-    colors[ImGuiCol_ProgressBarFill]        = ImVec4(0.68f, 0.82f, 0.84f, 1.0f);
-    colors[ImGuiCol_MenuBarGrip]            = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-    colors[ImGuiCol_MenuBarGripBorder]      = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
-    colors[ImGuiCol_TextEditorDefault]      = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-    colors[ImGuiCol_TextEditorKeyword]      = ImVec4(0.255f, 0.531f, 0.706f, 1.0f);
-    colors[ImGuiCol_TextEditorSpecialKeyword] = ImVec4(0.850f, 0.630f, 0.874f, 1.0f);
-    colors[ImGuiCol_TextEditorNumber]       = ImVec4(0.520f, 0.784f, 0.756f, 1.0f);
-    colors[ImGuiCol_TextEditorString]       = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
-    colors[ImGuiCol_TextEditorCharLiteral]  = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
-    colors[ImGuiCol_TextEditorPunctuation]  = ImVec4(0.961f, 0.961f, 0.961f, 1.0f);
-    colors[ImGuiCol_TextEditorPreprocessor] = ImVec4(0.459f, 0.478f, 0.486f, 1.0f);
-    colors[ImGuiCol_TextEditorIdentifier]   = ImVec4(1.0f, 0.777f, 0.098f, 1.0f);
-    colors[ImGuiCol_TextEditorComment]      = ImVec4(0.356f, 0.588f, 0.254f, 1.0f);
-    colors[ImGuiCol_TextEditorMultiLineComment] = ImVec4(0.356, 0.588, 0.254f, 1.0f);
-    colors[ImGuiCol_TextEditorLineNumber]   = ImVec4(0.0f, 0.678f, 0.686f, 1.0f);
-    colors[ImGuiCol_TextEditorCurrentLineFill] = ImVec4(0.0f, 0.0f, 0.0f, 0.25f);
-    colors[ImGuiCol_TextEditorCurrentLineFillInactive] = ImVec4(0.5f, 0.5f, 0.5f, 0.25f);
-    colors[ImGuiCol_TextEditorCurrentLineEdge] = ImVec4(0.625f, 0.625f, 0.625f, 0.25f);
-    colors[ImGuiCol_LogTrace]               = ImVec4(0.9f, 0.9f, 0.9f, 1.0f);
-    colors[ImGuiCol_LogInfo]                = ImVec4(0.1f, 0.8f, 0.3f, 1.0);
-    colors[ImGuiCol_LogWarn]                = ImVec4(1.0f, 0.975f, 0.66f, 1.0f);
-    colors[ImGuiCol_LogError]               = ImVec4(0.9f, 0.1f, 0.3f, 1.0f);
-    colors[ImGuiCol_LogCritical]            = ImVec4(0.8f, 0.1f, 0.2f, 1.0f);
 }
 
 void ImGui::StyleColorsClassic(ImGuiStyle* dst)
@@ -336,37 +311,37 @@ void ImGui::StyleColorsClassic(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
-    // IMGUI CUSTOM: Merged from features/shadows
-    colors[ImGuiCol_WindowShadow] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+    // ImGui Custom: Merged from features/shadows
+    colors[ImGuiCol_WindowShadow]           = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
     // --------------------------------------- //
-    colors[ImGuiCol_ScrollbarDots] = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
-    colors[ImGuiCol_ButtonToggled] = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
-    colors[ImGuiCol_ButtonToggledHovered] = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
-    colors[ImGuiCol_ProgressBarBg] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-    colors[ImGuiCol_ProgressBarBorder] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
-    colors[ImGuiCol_ProgressBarFill] = ImVec4(0.68f, 0.82f, 0.84f, 1.0f);
-    colors[ImGuiCol_MenuBarGrip] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-    colors[ImGuiCol_MenuBarGripBorder] = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
-    colors[ImGuiCol_TextEditorDefault] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-    colors[ImGuiCol_TextEditorKeyword] = ImVec4(0.255f, 0.531f, 0.706f, 1.0f);
+    colors[ImGuiCol_ScrollbarDots]          = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
+    colors[ImGuiCol_ButtonToggled]          = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
+    colors[ImGuiCol_ButtonToggledHovered]   = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
+    colors[ImGuiCol_ProgressBarBg]          = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+    colors[ImGuiCol_ProgressBarBorder]      = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
+    colors[ImGuiCol_ProgressBarFill]        = ImVec4(0.68f, 0.82f, 0.84f, 1.0f);
+    colors[ImGuiCol_MenuBarGrip]            = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+    colors[ImGuiCol_MenuBarGripBorder]      = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
+    colors[ImGuiCol_TextEditorDefault]      = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+    colors[ImGuiCol_TextEditorKeyword]      = ImVec4(0.255f, 0.531f, 0.706f, 1.0f);
     colors[ImGuiCol_TextEditorSpecialKeyword] = ImVec4(0.850f, 0.630f, 0.874f, 1.0f);
-    colors[ImGuiCol_TextEditorNumber] = ImVec4(0.520f, 0.784f, 0.756f, 1.0f);
-    colors[ImGuiCol_TextEditorString] = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
-    colors[ImGuiCol_TextEditorCharLiteral] = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
-    colors[ImGuiCol_TextEditorPunctuation] = ImVec4(0.961f, 0.961f, 0.961f, 1.0f);
+    colors[ImGuiCol_TextEditorNumber]       = ImVec4(0.520f, 0.784f, 0.756f, 1.0f);
+    colors[ImGuiCol_TextEditorString]       = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
+    colors[ImGuiCol_TextEditorCharLiteral]  = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
+    colors[ImGuiCol_TextEditorPunctuation]  = ImVec4(0.961f, 0.961f, 0.961f, 1.0f);
     colors[ImGuiCol_TextEditorPreprocessor] = ImVec4(0.459f, 0.478f, 0.486f, 1.0f);
-    colors[ImGuiCol_TextEditorIdentifier] = ImVec4(1.0f, 0.777f, 0.098f, 1.0f);
-    colors[ImGuiCol_TextEditorComment] = ImVec4(0.356f, 0.588f, 0.254f, 1.0f);
+    colors[ImGuiCol_TextEditorIdentifier]   = ImVec4(1.0f, 0.777f, 0.098f, 1.0f);
+    colors[ImGuiCol_TextEditorComment]      = ImVec4(0.356f, 0.588f, 0.254f, 1.0f);
     colors[ImGuiCol_TextEditorMultiLineComment] = ImVec4(0.356, 0.588, 0.254f, 1.0f);
-    colors[ImGuiCol_TextEditorLineNumber] = ImVec4(0.0f, 0.678f, 0.686f, 1.0f);
+    colors[ImGuiCol_TextEditorLineNumber]   = ImVec4(0.0f, 0.678f, 0.686f, 1.0f);
     colors[ImGuiCol_TextEditorCurrentLineFill] = ImVec4(0.0f, 0.0f, 0.0f, 0.25f);
     colors[ImGuiCol_TextEditorCurrentLineFillInactive] = ImVec4(0.5f, 0.5f, 0.5f, 0.25f);
     colors[ImGuiCol_TextEditorCurrentLineEdge] = ImVec4(0.625f, 0.625f, 0.625f, 0.25f);
-    colors[ImGuiCol_LogTrace] = ImVec4(0.9f, 0.9f, 0.9f, 1.0f);
-    colors[ImGuiCol_LogInfo] = ImVec4(0.1f, 0.8f, 0.3f, 1.0);
-    colors[ImGuiCol_LogWarn] = ImVec4(1.0f, 0.975f, 0.66f, 1.0f);
-    colors[ImGuiCol_LogError] = ImVec4(0.9f, 0.1f, 0.3f, 1.0f);
-    colors[ImGuiCol_LogCritical] = ImVec4(0.8f, 0.1f, 0.2f, 1.0f);
+    colors[ImGuiCol_LogTrace]               = ImVec4(0.9f, 0.9f, 0.9f, 1.0f);
+    colors[ImGuiCol_LogInfo]                = ImVec4(0.1f, 0.8f, 0.3f, 1.0);
+    colors[ImGuiCol_LogWarn]                = ImVec4(1.0f, 0.975f, 0.66f, 1.0f);
+    colors[ImGuiCol_LogError]               = ImVec4(0.9f, 0.1f, 0.3f, 1.0f);
+    colors[ImGuiCol_LogCritical]            = ImVec4(0.8f, 0.1f, 0.2f, 1.0f);
 }
 
 // Those light colors are better suited with a thicker font than the default one + FrameBorder
@@ -433,40 +408,40 @@ void ImGui::StyleColorsLight(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
-    // IMGUI CUSTOM: Merged from features/shadows
+    // ImGui Custom: Merged from features/shadows
     colors[ImGuiCol_WindowShadow] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
     // --------------------------------------- //
-    colors[ImGuiCol_ScrollbarDots] = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
-    colors[ImGuiCol_ButtonToggled] = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
-    colors[ImGuiCol_ButtonToggledHovered] = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
-    colors[ImGuiCol_ProgressBarBg] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-    colors[ImGuiCol_ProgressBarBorder] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
-    colors[ImGuiCol_ProgressBarFill] = ImVec4(0.68f, 0.82f, 0.84f, 1.0f);
-    colors[ImGuiCol_MenuBarGrip] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-    colors[ImGuiCol_MenuBarGripBorder] = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
-    colors[ImGuiCol_TextEditorDefault] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-    colors[ImGuiCol_TextEditorKeyword] = ImVec4(0.255f, 0.531f, 0.706f, 1.0f);
+        colors[ImGuiCol_ScrollbarDots]          = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
+    colors[ImGuiCol_ButtonToggled]          = ImVec4(0.325f, 0.475f, 0.706f, 1.0f);
+    colors[ImGuiCol_ButtonToggledHovered]   = ImVec4(0.425f, 0.575f, 0.806f, 1.0f);
+    colors[ImGuiCol_ProgressBarBg]          = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+    colors[ImGuiCol_ProgressBarBorder]      = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
+    colors[ImGuiCol_ProgressBarFill]        = ImVec4(0.68f, 0.82f, 0.84f, 1.0f);
+    colors[ImGuiCol_MenuBarGrip]            = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+    colors[ImGuiCol_MenuBarGripBorder]      = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
+    colors[ImGuiCol_TextEditorDefault]      = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+    colors[ImGuiCol_TextEditorKeyword]      = ImVec4(0.255f, 0.531f, 0.706f, 1.0f);
     colors[ImGuiCol_TextEditorSpecialKeyword] = ImVec4(0.850f, 0.630f, 0.874f, 1.0f);
-    colors[ImGuiCol_TextEditorNumber] = ImVec4(0.520f, 0.784f, 0.756f, 1.0f);
-    colors[ImGuiCol_TextEditorString] = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
-    colors[ImGuiCol_TextEditorCharLiteral] = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
-    colors[ImGuiCol_TextEditorPunctuation] = ImVec4(0.961f, 0.961f, 0.961f, 1.0f);
+    colors[ImGuiCol_TextEditorNumber]       = ImVec4(0.520f, 0.784f, 0.756f, 1.0f);
+    colors[ImGuiCol_TextEditorString]       = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
+    colors[ImGuiCol_TextEditorCharLiteral]  = ImVec4(0.776f, 0.580f, 0.482f, 1.0f);
+    colors[ImGuiCol_TextEditorPunctuation]  = ImVec4(0.961f, 0.961f, 0.961f, 1.0f);
     colors[ImGuiCol_TextEditorPreprocessor] = ImVec4(0.459f, 0.478f, 0.486f, 1.0f);
-    colors[ImGuiCol_TextEditorIdentifier] = ImVec4(1.0f, 0.777f, 0.098f, 1.0f);
-    colors[ImGuiCol_TextEditorComment] = ImVec4(0.356f, 0.588f, 0.254f, 1.0f);
+    colors[ImGuiCol_TextEditorIdentifier]   = ImVec4(1.0f, 0.777f, 0.098f, 1.0f);
+    colors[ImGuiCol_TextEditorComment]      = ImVec4(0.356f, 0.588f, 0.254f, 1.0f);
     colors[ImGuiCol_TextEditorMultiLineComment] = ImVec4(0.356, 0.588, 0.254f, 1.0f);
-    colors[ImGuiCol_TextEditorLineNumber] = ImVec4(0.0f, 0.678f, 0.686f, 1.0f);
+    colors[ImGuiCol_TextEditorLineNumber]   = ImVec4(0.0f, 0.678f, 0.686f, 1.0f);
     colors[ImGuiCol_TextEditorCurrentLineFill] = ImVec4(0.0f, 0.0f, 0.0f, 0.25f);
     colors[ImGuiCol_TextEditorCurrentLineFillInactive] = ImVec4(0.5f, 0.5f, 0.5f, 0.25f);
     colors[ImGuiCol_TextEditorCurrentLineEdge] = ImVec4(0.625f, 0.625f, 0.625f, 0.25f);
-    colors[ImGuiCol_LogTrace] = ImVec4(0.9f, 0.9f, 0.9f, 1.0f);
-    colors[ImGuiCol_LogInfo] = ImVec4(0.1f, 0.8f, 0.3f, 1.0);
-    colors[ImGuiCol_LogWarn] = ImVec4(1.0f, 0.975f, 0.66f, 1.0f);
-    colors[ImGuiCol_LogError] = ImVec4(0.9f, 0.1f, 0.3f, 1.0f);
-    colors[ImGuiCol_LogCritical] = ImVec4(0.8f, 0.1f, 0.2f, 1.0f);
+    colors[ImGuiCol_LogTrace]               = ImVec4(0.9f, 0.9f, 0.9f, 1.0f);
+    colors[ImGuiCol_LogInfo]                = ImVec4(0.1f, 0.8f, 0.3f, 1.0);
+    colors[ImGuiCol_LogWarn]                = ImVec4(1.0f, 0.975f, 0.66f, 1.0f);
+    colors[ImGuiCol_LogError]               = ImVec4(0.9f, 0.1f, 0.3f, 1.0f);
+    colors[ImGuiCol_LogCritical]            = ImVec4(0.8f, 0.1f, 0.2f, 1.0f);
 }
 
-// IMGUI CUSTOM: Merged from features/shadows
+// ImGui Custom: Merged from features/shadows
 //-----------------------------------------------------------------------------
 // [SECTION] ImFontAtlasShadowTexConfig
 //-----------------------------------------------------------------------------
@@ -1840,7 +1815,7 @@ void ImDrawList::AddImageRounded(ImTextureID user_texture_id, const ImVec2& p_mi
         PopTextureID();
 }
 
-// IMGUI CUSTOM: Merged from features/shadows
+// ImGui Custom: Merged from features/shadows
 //-----------------------------------------------------------------------------
 // [SECTION] ImDrawList Shadow Primitives
 //-----------------------------------------------------------------------------
@@ -2931,7 +2906,7 @@ ImFontAtlas::ImFontAtlas()
     memset(this, 0, sizeof(*this));
     TexGlyphPadding = 1;
     PackIdMouseCursors = PackIdLines = -1;
-    // IMGUI CUSTOM: Merged from features/shadows
+    // ImGui Custom: Merged from features/shadows
     ShadowRectIds[0] = ShadowRectIds[1] = -1;
     ShadowTexConfig.SetupDefaults();
     // --------------------------------------- //
@@ -2963,7 +2938,7 @@ void    ImFontAtlas::ClearInputData()
     ConfigData.clear();
     CustomRects.clear();
     PackIdMouseCursors = PackIdLines = -1;
-    // IMGUI CUSTOM: Merged from features/shadows
+    // ImGui Custom: Merged from features/shadows
     ShadowRectIds[0] = ShadowRectIds[1] = -1;
     // --------------------------------------- //
     // Important: we leave TexReady untouched
@@ -3746,7 +3721,7 @@ static void ImFontAtlasBuildRenderLinesTexData(ImFontAtlas* atlas)
     }
 }
 
-// IMGUI CUSTOM: Merged from features/shadows
+// ImGui Custom: Merged from features/shadows
 // Register the rectangles we need for the rounded corner images
 static void ImFontAtlasBuildRegisterShadowCustomRects(ImFontAtlas* atlas)
 {
@@ -3993,7 +3968,7 @@ void ImFontAtlasBuildInit(ImFontAtlas* atlas)
             atlas->PackIdLines = atlas->AddCustomRectRegular(IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 2, IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1);
     }
 
-    // IMGUI CUSTOM: Merged from features/shadows
+    // ImGui Custom: Merged from features/shadows
     ImFontAtlasBuildRegisterShadowCustomRects(atlas);
     // --------------------------------------- //
 }
@@ -4005,7 +3980,7 @@ void ImFontAtlasBuildFinish(ImFontAtlas* atlas)
     IM_ASSERT(atlas->TexPixelsAlpha8 != NULL || atlas->TexPixelsRGBA32 != NULL);
     ImFontAtlasBuildRenderDefaultTexData(atlas);
     ImFontAtlasBuildRenderLinesTexData(atlas);
-    // IMGUI CUSTOM: Merged from features/shadows
+    // ImGui Custom: Merged from features/shadows
     ImFontAtlasBuildRenderShadowTexData(atlas);
     // --------------------------------------- //
 
@@ -5053,10 +5028,11 @@ void ImGui::RenderArrowPointingAt(ImDrawList* draw_list, ImVec2 pos, ImVec2 half
 // and because the saved space means that the left-most tab label can stay at exactly the same position as the label of a loose window.
 void ImGui::RenderArrowDockMenu(ImDrawList* draw_list, ImVec2 p_min, float sz, ImU32 col)
 {
-    //Original
+    //Original:
     //draw_list->AddRectFilled(p_min + ImVec2(sz * 0.20f, sz * 0.15f), p_min + ImVec2(sz * 0.80f, sz * 0.30f), col);
     //RenderArrowPointingAt(draw_list, p_min + ImVec2(sz * 0.50f, sz * 0.85f), ImVec2(sz * 0.30f, sz * 0.40f), ImGuiDir_Down, col);
 
+    // ImGui Custom:
     draw_list->AddRectFilled(p_min + ImVec2(sz * 0.10f, sz * 0.20f), p_min + ImVec2(sz * 0.70f, sz * 0.30f), col);
     draw_list->AddRectFilled(p_min + ImVec2(sz * 0.10f, sz * 0.425f), p_min + ImVec2(sz * 0.70f, sz * 0.525f), col);
     draw_list->AddRectFilled(p_min + ImVec2(sz * 0.10f, sz * 0.65f), p_min + ImVec2(sz * 0.70f, sz * 0.75f), col);

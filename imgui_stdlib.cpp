@@ -74,3 +74,15 @@ bool ImGui::InputTextWithHint(const char* label, const char* hint, std::string* 
     cb_user_data.ChainCallbackUserData = user_data;
     return InputTextWithHint(label, hint, (char*)str->c_str(), str->capacity() + 1, flags, InputTextCallback, &cb_user_data);
 }
+
+bool ImGui::SelectableInput(const char* str_id, float width, bool selected, ImGuiSelectableFlags selectable_flags, std::string* str, bool* input, ImGuiInputTextFlags input_flags, ImGuiInputTextCallback callback, void* user_data)
+{
+    IM_ASSERT((input_flags & ImGuiInputTextFlags_CallbackResize) == 0);
+    input_flags |= ImGuiInputTextFlags_CallbackResize;
+
+    InputTextCallback_UserData cb_user_data;
+    cb_user_data.Str = str;
+    cb_user_data.ChainCallback = callback;
+    cb_user_data.ChainCallbackUserData = user_data;
+    return SelectableInput(str_id, width, selected, selectable_flags, (char*)str->c_str(), str->capacity() + 1, input, input_flags, InputTextCallback, &cb_user_data);
+}
