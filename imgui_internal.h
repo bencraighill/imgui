@@ -3689,7 +3689,8 @@ namespace ImGui
     IMGUI_API bool          ButtonCornersEx(const char* label, const ImVec2& size_arg = ImVec2(0, 0), ImGuiButtonFlags flags = 0, ImDrawFlags draw_flags = 0);
     IMGUI_API bool          ButtonStackEx(const char* ids, const char* const items[], int size, int* currentItem, const ImVec2& size_arg = ImVec2(0, 0), float rounding = 0.0f, ImGuiButtonFlags flags = 0);
     IMGUI_API bool          ToggleButtonEx(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), ImGuiButtonFlags flags = 0);
-    IMGUI_API bool          SwitchButtonEx(const char* ids, const char* const items[], int size, int* currentItem, const ImVec2& size_arg = ImVec2(0, 0), ImGuiButtonFlags flags = 0);
+    IMGUI_API bool          SwitchButtonEx(const char* ids, const char* const items[], int size, int* current_item, const bool* items_enabled, const ImVec2& size_arg = ImVec2(0, 0), ImGuiButtonFlags flags = 0);
+    IMGUI_API bool          SwitchButtonEx(const char* ids, const char* const items[], int size, int* current_item, const ImVec2& size_arg = ImVec2(0, 0), ImGuiButtonFlags flags = 0);
     IMGUI_API int           SwitchImageButtonEx(const char* ids, ImTextureID images[], int size, ImVec2 imageSize, ImVec2 uvMin, ImVec2 uvMax, int currentItem, const ImVec2& size_arg = ImVec2(0, 0), ImGuiButtonFlags flags = 0);
     IMGUI_API bool          ArrowButtonEx(const char* str_id, ImGuiDir dir, ImVec2 size_arg, ImGuiButtonFlags flags = 0);
     IMGUI_API bool          ImageButtonEx(ImGuiID id, ImTextureID texture_id, const ImVec2& image_size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& bg_col, const ImVec4& tint_col, ImGuiButtonFlags flags = 0);

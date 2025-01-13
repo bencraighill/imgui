@@ -878,7 +878,7 @@ bool ImGui::ToggleButtonEx(const char* label, bool* v, const ImVec2& size_arg, I
     return pressed;
 }
 
-bool ImGui::SwitchButtonEx(const char* ids, const char* const items[], int itemSize, int* currentItem, const ImVec2& size_arg, ImGuiButtonFlags flags)
+bool ImGui::SwitchButtonEx(const char* ids, const char* const items[], int item_size, int* current_item, const bool* items_enabled, const ImVec2& size_arg, ImGuiButtonFlags flags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -890,9 +890,9 @@ bool ImGui::SwitchButtonEx(const char* ids, const char* const items[], int itemS
     bool pressedButton = false;
 
     const float height = size_arg.y == 0.0 ? ImGui::GetTextLineHeight() + style.FramePadding.y * 2.0f : size_arg.y;
-    ImVec2 button_size = ImVec2(size_arg.x / (float)itemSize, height);
+    ImVec2 button_size = ImVec2(size_arg.x / (float)item_size, height);
 
-    for (int i = 0; i < itemSize; i++)
+    for (int i = 0; i < item_size; i++)
     {
         PushID(i);
         const ImGuiID id = window->GetID(ids);
@@ -919,17 +919,18 @@ bool ImGui::SwitchButtonEx(const char* ids, const char* const items[], int itemS
 
         if (pressed)
         {
-            *currentItem = i;
+            *current_item = i;
             pressedButton = true;
         }
 
         // Render
-        const ImU32 col = GetColorU32((*currentItem == i && hovered) ? ImGuiCol_ButtonToggledHovered : (*currentItem == i) ? ImGuiCol_ButtonToggled : (held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+        const bool active = (*current_item == i) || (items_enabled && items_enabled[i]);
+        const ImU32 col = GetColorU32((active && hovered) ? ImGuiCol_ButtonToggledHovered : active ? ImGuiCol_ButtonToggled : (held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
         RenderNavHighlight(bb, id);
 
         float rounding = style.FrameRounding;
 
-        ImDrawFlags_ cornerFlags = i == 0 ? ImDrawFlags_RoundCornersLeft : (i == itemSize - 1) ? ImDrawFlags_RoundCornersRight : ImDrawFlags_RoundCornersNone;
+        ImDrawFlags_ cornerFlags = i == 0 ? ImDrawFlags_RoundCornersLeft : (i == item_size - 1) ? ImDrawFlags_RoundCornersRight : ImDrawFlags_RoundCornersNone;
 
         window->DrawList->AddRectFilled(bb.Min, bb.Max, col, rounding, cornerFlags);
         const float border_size = g.Style.FrameBorderSize;
@@ -946,6 +947,11 @@ bool ImGui::SwitchButtonEx(const char* ids, const char* const items[], int itemS
     ItemSize(ImVec2(size_arg.x, height), style.FramePadding.y);
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
     return pressedButton;
+}
+
+bool ImGui::SwitchButtonEx(const char* ids, const char* const items[], int item_size, int* current_item, const ImVec2& size_arg, ImGuiButtonFlags flags)
+{
+    return SwitchButtonEx(ids, items, item_size, current_item, nullptr, size_arg, flags);
 }
 
 int ImGui::SwitchImageButtonEx(const char* ids, ImTextureID images[], int itemSize, ImVec2 imageSize, ImVec2 uvMin, ImVec2 uvMax, int currentItem, const ImVec2& size_arg, ImGuiButtonFlags flags)
