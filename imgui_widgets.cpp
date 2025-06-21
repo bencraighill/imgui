@@ -7095,11 +7095,29 @@ bool ImGui::SelectableInput(const char* str_id, float width, bool selected, ImGu
     if (temp_input_is_active || temp_input_start)
     {
         SetNextItemWidth(width);
-        const bool temp_input = TempInputText(g.LastItemData.Rect, id, "##Input", buf, (int)buf_size, input_flags, callback, user_data);
+
+        // Note: This is copied almost directly from 'TempInputText' but we don't apply the 'ImGuiInputTextFlags_MergedItem' flag so we can query the text
+        // input widget with queries such as 'IsItemDeactivatedAfterEdit'
+        // ----- Begin Modified 'TempInputText' -----
+        const bool init = (g.TempInputId != id);
+        if (init)
+            ClearActiveID();
+
+        const ImRect bb = g.LastItemData.Rect;
+        g.CurrentWindow->DC.CursorPos = bb.Min;
+        const bool value_changed = InputTextEx("##Input", NULL, buf, (int)buf_size, bb.GetSize(), input_flags, callback, user_data);
+        if (init)
+        {
+            // First frame we started displaying the InputText widget, we expect it to take the active id.
+            IM_ASSERT(g.ActiveId == id);
+            g.TempInputId = g.ActiveId;
+        }
+        // ----- End Modified 'TempInputText' -----
+
         KeepAliveID(id);
 
         if (input)
-            *input = temp_input;
+            *input = value_changed;
     }
     else
     {
